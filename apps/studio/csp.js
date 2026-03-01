@@ -1,30 +1,34 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL
-  ? new URL(process.env.NEXT_PUBLIC_API_URL).origin
-  : ''
-const SUPABASE_URL = process.env.SUPABASE_URL ? new URL(process.env.SUPABASE_URL).origin : ''
-const GOTRUE_URL = process.env.NEXT_PUBLIC_GOTRUE_URL
-  ? new URL(process.env.NEXT_PUBLIC_GOTRUE_URL).origin
-  : ''
+// Safe URL origin helper — returns '' for missing or invalid/placeholder URLs
+function safeOrigin(raw) {
+  if (!raw) return ''
+  try {
+    return new URL(raw).origin
+  } catch {
+    return ''
+  }
+}
+
+const API_URL = safeOrigin(process.env.NEXT_PUBLIC_API_URL)
+const SUPABASE_URL = safeOrigin(process.env.SUPABASE_URL)
+const GOTRUE_URL = safeOrigin(process.env.NEXT_PUBLIC_GOTRUE_URL)
 const SUPABASE_PROJECTS_URL = 'https://*.supabase.co https://*.storage.supabase.co'
 const SUPABASE_PROJECTS_URL_WS = 'wss://*.supabase.co'
 
 // construct the URL for the Websocket Local URLs
 let SUPABASE_LOCAL_PROJECTS_URL_WS = ''
 if (SUPABASE_URL) {
-  const url = new URL(SUPABASE_URL)
-  const wsUrl = `${url.hostname}:${url.port}`
-  SUPABASE_LOCAL_PROJECTS_URL_WS = `ws://${wsUrl} wss://${wsUrl}`
+  try {
+    const url = new URL(SUPABASE_URL)
+    const wsUrl = `${url.hostname}:${url.port}`
+    SUPABASE_LOCAL_PROJECTS_URL_WS = `ws://${wsUrl} wss://${wsUrl}`
+  } catch {}
 }
 
 // Needed to test docs search in local dev
-const SUPABASE_DOCS_PROJECT_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
-  : ''
+const SUPABASE_DOCS_PROJECT_URL = safeOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL)
 
 // Needed to test docs content API in local dev
-const SUPABASE_CONTENT_API_URL = process.env.NEXT_PUBLIC_CONTENT_API_URL
-  ? new URL(process.env.NEXT_PUBLIC_CONTENT_API_URL).origin
-  : ''
+const SUPABASE_CONTENT_API_URL = safeOrigin(process.env.NEXT_PUBLIC_CONTENT_API_URL)
 
 const isDevOrStaging =
   process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ||
