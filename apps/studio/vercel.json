@@ -1,0 +1,4 @@
+{
+  "buildCommand": "SKIP_ASSET_UPLOAD=1 pnpm build",
+  "framework": "nextjs"
+}
